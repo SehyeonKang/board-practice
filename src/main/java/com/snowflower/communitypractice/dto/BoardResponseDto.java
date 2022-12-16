@@ -2,10 +2,12 @@ package com.snowflower.communitypractice.dto;
 
 import com.snowflower.communitypractice.domain.board.Board;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor
 public class BoardResponseDto {
 
     private Long id;
