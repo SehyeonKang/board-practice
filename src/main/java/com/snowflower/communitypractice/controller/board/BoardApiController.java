@@ -29,15 +29,31 @@ public class BoardApiController {
      * 게시글 리스트 조회
      */
     @GetMapping("/boards")
-    public List<BoardResponseDto> findAll() {
-        return boardService.findAll();
+    public List<BoardResponseDto> findAll(@RequestParam final char deleteYn) {
+        return boardService.findAllByDeleteYn(deleteYn);
+    }
+
+    /**
+     * 게시글 상세정보 조회
+     */
+    @GetMapping("/boards/{id}")
+    public BoardResponseDto findById(@PathVariable final Long id) {
+        return boardService.findById(id);
     }
 
     /**
      * 게시글 수정
      */
     @PatchMapping("/boards/{id}")
-    public Long save(@PathVariable final Long id, @RequestBody final BoardRequestDto params) {
+    public Long update(@PathVariable final Long id, @RequestBody final BoardRequestDto params) {
         return boardService.update(id, params);
+    }
+
+    /**
+     * 게시글 삭제
+     */
+    @DeleteMapping("/boards/{id}")
+    public Long delete(@PathVariable final Long id) {
+        return boardService.delete(id);
     }
 }
