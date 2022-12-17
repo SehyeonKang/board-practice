@@ -59,7 +59,8 @@
          */
         window.onload = () => {
 
-            findAll(1);
+            setQueryStringParams();
+            findAll();
             addEnterSearchEvent();
         }
 
@@ -100,6 +101,9 @@
          */
         function findAll(page) {
 
+            const pageParam = Number(new URLSearchParams(location.search).get('page'));
+            page = (page) ? page : ((pageParam) ? pageParam : 1);
+
             const form = document.getElementById('searchForm');
             const params = {
                 page: page
@@ -108,6 +112,10 @@
                 , searchType: form.searchType.value
                 , keyword: form.keyword.value
             }
+
+            const queryString = new URLSearchParams(params).toString();
+            const replaceUri = location.pathname + '?' + queryString;
+            history.replaceState({}, '', replaceUri);
 
             getJson('/api/boards', params).then(response => {
                 if (!Object.keys(response).length) {
@@ -120,11 +128,12 @@
                 let num = response.params.pagination.totalRecordCount - ((response.params.page - 1) * response.params.recordPerPage);
 
                 response.list.forEach((obj, idx) => {
+                    const viewUri = `/board/view/${obj.id}` + '?' + queryString;
                     html += `
        				<tr>
   						<td>${num--}</td>
   						<td class="text-left">
-  							<a href="javascript: void(0);" onclick="goView(${obj.id})">${obj.title}</a>
+  							<a href="${viewUri}">${obj.title}</a>
   						</td>
   						<td>${obj.writer}</td>
   						<td>${moment(obj.createdDate).format('YYYY-MM-DD HH:mm:ss')}</td>
@@ -181,6 +190,24 @@
             }
 
             document.querySelector('.pagination').innerHTML = html;
+        }
+
+        /**
+         * 쿼리 스트링 파라미터 세팅
+         */
+        function setQueryStringParams() {
+
+            if ( !location.search ) {
+                return false;
+            }
+
+            const form = document.getElementById('searchForm');
+
+            new URLSearchParams(location.search).forEach((value, key) => {
+                if (form[key]) {
+                    form[key].value = value;
+                }
+            });
         }
 
         /*]]>*/
